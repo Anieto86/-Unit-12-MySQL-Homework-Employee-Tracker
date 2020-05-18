@@ -1,14 +1,16 @@
-const util = require('u til');
+const util = require('util');
 const mysql = require('mysql');
 
-const connection = mysql.connection({
+const connection = mysql.createConnection({
 host: "localhost",
+port: 3306,
 user: "root",
-password: "",
-database: "",
-
+database:" employees"
 });
 
-connection.connect();
+connection.connect(function(err) {
+    if (err) throw err;
+    console.log("no connect");
+});
 
 module.exports = connection;
