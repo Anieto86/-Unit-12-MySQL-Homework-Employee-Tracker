@@ -3,7 +3,7 @@ const mysql = require('mysql');
 const inquirer = require('inquirer');
 const util = require('util');
 const connections = require('./connections');
-const console.table = require('./console.table');
+const consoletable = require('consoletable');
 //SQL connection 
 
 
@@ -22,8 +22,25 @@ async function askQuestion() {
             maessage: 'What would like to do?',
             choices: ['View all the employees', 'View all the employees by Departament', 'View all the employees by Manager', 'Add employee', 'Remove employee', 'Update employee role', 'Update employee manager', "EXIT"]
         },
+
     ]);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 async function viewEmployees() {
@@ -53,23 +70,6 @@ async function viewEmpbyManager() {
 }
 
 
-async function AddEmployee () {
-
-
-}
-
-async function RemoveEmployee () {
-
-    
-}
-
-
-
-
-
-
-
-
 async function askRole() {
     return await inquirer.prompt([
         {
@@ -84,6 +84,22 @@ async function askRole() {
 
 
 
+async function AddEmployee() {
+
+
+}
+
+async function RemoveEmployee() {
+
+
+}
+
+
+
+
+
+
+
 
 
 async function main() {
@@ -92,20 +108,24 @@ async function main() {
     if (accion.firstQ == "View all the employees") {
         console.log(accion);
         await viewEmployees();
-    } 
-    else if (accion2.firstQ == "View all the employees by Departament") {
-        console.log(accion2);
-        await viewEmpbyDeps();
     }
+    else if (accion.firstQ == 'View all the employees by Departament') {
+        console.log(accion);
+        await viewEmpbyDep();
+
+    } else if (accion.firstQ == 'View all the employees by Manager') {
+        console.log(accion);
+        await viewEmpbyManager();
+    } else if (accion.firstQ == 'Add employee')
+        await askRole();
 
 
 
 
 
 
-
-
+    connection.end();
 
 
 }
-main();
+main().catch(err => console.log(err));
