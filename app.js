@@ -12,6 +12,16 @@ async function connect() {
     })
 }
 
+// Wrap connection.query() in a promise! 
+async function query(command, values) {
+    return new Promise((resolve, reject) => {
+        connection.query(command, values, (error, results) => {
+            if (error) reject(error); // nay!
+            else resolve(results); // yay!
+        })
+    })
+}
+
 
 // Inquirer
 
@@ -117,6 +127,10 @@ async function UpdateEmployee() {
 
 
 async function main() {
+
+    // Breathe the fresh air of promisified connections.
+    await connect();
+    console.log("connected!", connection.threadId);
 
     let finished = false;
 
