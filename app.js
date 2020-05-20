@@ -1,26 +1,7 @@
 //Dependencies
 const inquirer = require('inquirer');
-const connection = require('./connection');
+const connection = require('./connections');
 
-// Wrap connection.connect() in a promise! 
-async function connect() {
-    return new Promise((resolve, reject) => {
-        connection.connect(err => {
-            if (err) reject(err); // oh no!
-            else resolve(); // oh yeah!
-        })
-    })
-}
-
-// Wrap connection.query() in a promise! 
-async function query(command, values) {
-    return new Promise((resolve, reject) => {
-        connection.query(command, values, (error, results) => {
-            if (error) reject(error); // nay!
-            else resolve(results); // yay!
-        })
-    })
-}
 
 
 // Inquirer
@@ -29,7 +10,7 @@ async function askQuestion() {
     return await inquirer.prompt([
         {
             name: 'firstQ',
-            type: 'checkbox',
+            type: 'list',
             maessage: 'What would like to do?',
             choices: ['View all the employees', 'View all the employees by Departament', 'View all the employees by Manager', 'Add employee', 'Remove employee', 'Update employee role', 'Update employee manager', "EXIT"]
         },
@@ -38,8 +19,8 @@ async function askQuestion() {
 };
 
 
-async function viewEmployees() {
-    let results = await connection.query("SELECT * FROM employees");
+async function viewEmployee() {
+    let results = await connection.query("SELECT * FROM employee");
 
     console.log(results);
 }
@@ -65,7 +46,7 @@ async function AddEmployee() {
             maessage: 'Enter First Name?',
         },
         {
-            name: 'LastName',
+            name: 'lastName',
             type: 'input',
             maessage: 'Enter Last Name?',
         },
@@ -75,7 +56,11 @@ async function AddEmployee() {
             maessage: 'Enter Role?',
         },
     ]);
-    AddEmployee(add.firstname, add.lastname, add.role);
+    await connection.query (`
+        INSERT INTO employee (first_Name, last_Name)
+        VALUES (?, ?)
+
+    `,[add.firstName, add.lastName])
 };
 
 
@@ -129,23 +114,23 @@ async function UpdateEmployee() {
 async function main() {
 
     // Breathe the fresh air of promisified connections.
-    await connect();
+    
     console.log("connected!", connection.threadId);
 
     let finished = false;
 
     while (!finished) {
 
-        const accion = await askQuestio();
-        console.log("while")
-        if (question === "EXIT") {
+        const accion = await askQuestion();
+        console.log(accion)
+        if (accion === "EXIT") {
             finished = true;
             console.log("true");
         } else {
             console.log("true");
         }
         if (accion.firstQ == "View all the employees") {
-            await viewEmployees();
+            await viewEmployee();
         } else {
             console.log("view");
         }
@@ -171,7 +156,7 @@ async function main() {
             await UpdateEmployee();
         } else {
             console.log("Up");
-            break;
+          
         }
     };
     connection.end();
